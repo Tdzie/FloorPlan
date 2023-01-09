@@ -32,9 +32,7 @@ class cashier extends employee{
         this.#shiftLength = this.#formatTime(this.#endTime - this.#startTime);
         this.oneBreak = (this.#shiftLength.replace(":","") <= 600);
         this.oneBreakOneLunch = this.#shiftLength.replace(":","") > 600 && this.#shiftLength.replace(":","") < 830;
-        //console.log(this.#shiftLength);
-        //console.log(this.oneBreak);
-        //console.log(this.oneBreakOneLunch);
+      
         this.#shiftInMilli = (this.#endTime.getTime() - this.#startTime.getTime());
 
     }
