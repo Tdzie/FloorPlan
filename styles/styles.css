@@ -1,0 +1,19 @@
+#containerToFillWithCasherData{
+    font-size: x-small;
+}
+
+
+@media print{
+   #containerToFillWithCasherData{
+    font-size: x-small;
+} 
+body > header,
+body > div.input-group.mb-3{
+    display: none;
+}
+}
+
+.breakTimeDiv{
+    max-height: 300px;
+    margin-top: 20px;
+}
