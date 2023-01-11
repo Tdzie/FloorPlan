@@ -1,21 +1,29 @@
 
 
-var _arrForCashiers;
-var breaktimeCashierName = [];
 // Event Listeners
-//Upload file on change
 document.querySelector("#inputGroupFile02").addEventListener("change", Upload);
+
+var limitRolesForBreaks = document.querySelector("#LimitBreaksCheckbox");
+// Loop Counters
 var counterForjsonLoop = 4;
 var counterForLoading = 0;
+
+//Arrays for storing cashiers
+var _arrForCashiers;
+var breaktimeCashierName = [];
+
+// for lane assignments
+var lanes = new registers;
 
 
 //Reference elements
 var fileUpload = document.querySelector("#inputGroupFile02");
 var containerForCashierData = document.querySelector("#containerToFillWithCasherData");
 
-const normalColumnWidthTextAlignLeft = "col border";
-const normalColumnWidth = "col border text-center";
-const wideColumnWidth = "col-2 border";
+// bootstrap column width classes
+const normalColumnWidthTextAlignLeft = "col border border-dark";
+const normalColumnWidth = "col border text-center border-dark";
+const wideColumnWidth = "col-2 border border-dark";
 
 
 function Upload() {
@@ -75,17 +83,24 @@ function ProcessExcel(data) {
     arrayOfCashiers.forEach((item) =>{main(item)});
 
     breaktimeCashierName.sort((a,b) => a[0] - b[0]);
+
     console.log(arrayOfCashiers);
     console.log(breaktimeCashierName);
 
     var breakTimeDiv = document.createElement("div");
     breakTimeDiv.classList = "breakTimeDiv d-flex flex-column flex-wrap";
     breakTimeDiv.id = "breakDiv";
-
     containerForCashierData.appendChild(breakTimeDiv);
     var breakDiv = document.getElementById("breakDiv");
 
-    breaktimeCashierName.forEach((item) => {breakDiv.appendChild(addColumn(item[1] + " | " + item[3] + " |    " + item[2], normalColumnWidthTextAlignLeft))})
+    if(limitRolesForBreaks.checked){
+        breaktimeCashierName.forEach((item) => {if(limitTheRolesAllowedForBreaks(item[4])){ breakDiv.appendChild(addColumn(item[1] + " | " + item[3] + " |    " + item[2], normalColumnWidthTextAlignLeft))}});
+    }else{
+        breaktimeCashierName.forEach((item) => {breakDiv.appendChild(addColumn(item[1] + " | " + item[3] + " |    " + item[2], normalColumnWidthTextAlignLeft))});
+    }
+
+
+    breakDiv.appendChild(addColumn(lanes.lanesUsedByEndTime,normalColumnWidth))
 }
 
 function main(cashierDataPerLine){
@@ -96,35 +111,77 @@ function main(cashierDataPerLine){
     containerForCashierData.appendChild(buildRow);
 
     var grabRow = document.getElementById("row" + counterForLoading);
-
+    //Name
     grabRow.append(addColumn(`${cashierDataPerLine.employeeFirstName} ${cashierDataPerLine.employeeLastName}`, wideColumnWidth));
-    grabRow.append(addColumn(" ",normalColumnWidth));
-    grabRow.append(addColumn(cashierDataPerLine.employeeRole.split(" ")[0], normalColumnWidth));
+    //Lane Assignment
+    if(checkRoleForLaneAssignment(cashierDataPerLine.employeeRole)){
+        grabRow.append(addColumn(lanes.assignRegister(getTwentyFourHourTimeForBreakArray(cashierDataPerLine.employeeStartTime),getTwentyFourHourTimeForBreakArray(cashierDataPerLine.employeeEndTime),cashierDataPerLine.employeeRole),normalColumnWidth)); 
+    }else{
+        grabRow.append(addColumn(` `,normalColumnWidth));
+    }
+    //Role
+    grabRow.append(addColumn(cashierDataPerLine.employeeRole.split(" ")[0], normalColumnWidthTextAlignLeft));
+    //Startoing time
     grabRow.append(addColumn(cashierDataPerLine.employeeStartTime, normalColumnWidth));
+    //Ending Time
     grabRow.append(addColumn(cashierDataPerLine.employeeEndTime, normalColumnWidth));
+    //Check the number of breaks the cashier has and run the correct function.
     if(cashierDataPerLine.oneBreak){
-        breaktimeCashierName.push([getTwentyFourHourTimeForBreakArray(cashierDataPerLine.setBreaks()),cashierDataPerLine.setBreaks(),`${cashierDataPerLine.employeeLastName} ${cashierDataPerLine.employeeFirstName} `,"B"]);
+        breaktimeCashierName.push([getTwentyFourHourTimeForBreakArray(cashierDataPerLine.setBreaks()),cashierDataPerLine.setBreaks(),`${cashierDataPerLine.employeeLastName} ${cashierDataPerLine.employeeFirstName} `,"B",cashierDataPerLine.employeeRole]);
         grabRow.append(addColumn(cashierDataPerLine.setBreaks(), normalColumnWidth));
         grabRow.append(addColumn("-", normalColumnWidth));
         grabRow.append(addColumn("-", normalColumnWidth));
     }else if(cashierDataPerLine.oneBreakOneLunch){
-        breaktimeCashierName.push([getTwentyFourHourTimeForBreakArray(cashierDataPerLine.setBreaks()[0]),cashierDataPerLine.setBreaks()[0],`${cashierDataPerLine.employeeLastName} ${cashierDataPerLine.employeeFirstName}`,"B"]);
-        breaktimeCashierName.push([getTwentyFourHourTimeForBreakArray(cashierDataPerLine.setBreaks()[1]),cashierDataPerLine.setBreaks()[1],`${cashierDataPerLine.employeeLastName} ${cashierDataPerLine.employeeFirstName}`,"L"]);
+        breaktimeCashierName.push([getTwentyFourHourTimeForBreakArray(cashierDataPerLine.setBreaks()[0]),cashierDataPerLine.setBreaks()[0],`${cashierDataPerLine.employeeLastName} ${cashierDataPerLine.employeeFirstName}`,"B",cashierDataPerLine.employeeRole]);
+        breaktimeCashierName.push([getTwentyFourHourTimeForBreakArray(cashierDataPerLine.setBreaks()[1]),cashierDataPerLine.setBreaks()[1],`${cashierDataPerLine.employeeLastName} ${cashierDataPerLine.employeeFirstName}`,"L",cashierDataPerLine.employeeRole]);
         grabRow.append(addColumn(cashierDataPerLine.setBreaks()[0], normalColumnWidth));
         grabRow.append(addColumn(cashierDataPerLine.setBreaks()[1], normalColumnWidth));
         grabRow.append(addColumn("-", normalColumnWidth));
     }else{
-        breaktimeCashierName.push([getTwentyFourHourTimeForBreakArray(cashierDataPerLine.setBreaks()[0]),cashierDataPerLine.setBreaks()[0],`${cashierDataPerLine.employeeLastName} ${cashierDataPerLine.employeeFirstName}`,"B"]);
-        breaktimeCashierName.push([getTwentyFourHourTimeForBreakArray(cashierDataPerLine.setBreaks()[1]),cashierDataPerLine.setBreaks()[1],`${cashierDataPerLine.employeeLastName} ${cashierDataPerLine.employeeFirstName}`,"L"]);
-        breaktimeCashierName.push([getTwentyFourHourTimeForBreakArray(cashierDataPerLine.setBreaks()[2]),cashierDataPerLine.setBreaks()[2],`${cashierDataPerLine.employeeLastName} ${cashierDataPerLine.employeeFirstName}`,"B"]);
+        breaktimeCashierName.push([getTwentyFourHourTimeForBreakArray(cashierDataPerLine.setBreaks()[0]),cashierDataPerLine.setBreaks()[0],`${cashierDataPerLine.employeeLastName} ${cashierDataPerLine.employeeFirstName}`,"B",cashierDataPerLine.employeeRole]);
+        breaktimeCashierName.push([getTwentyFourHourTimeForBreakArray(cashierDataPerLine.setBreaks()[1]),cashierDataPerLine.setBreaks()[1],`${cashierDataPerLine.employeeLastName} ${cashierDataPerLine.employeeFirstName}`,"L",cashierDataPerLine.employeeRole]);
+        breaktimeCashierName.push([getTwentyFourHourTimeForBreakArray(cashierDataPerLine.setBreaks()[2]),cashierDataPerLine.setBreaks()[2],`${cashierDataPerLine.employeeLastName} ${cashierDataPerLine.employeeFirstName}`,"B",cashierDataPerLine.employeeRole]);
         grabRow.append(addColumn(cashierDataPerLine.setBreaks()[0], normalColumnWidth));
         grabRow.append(addColumn(cashierDataPerLine.setBreaks()[1], normalColumnWidth));
         grabRow.append(addColumn(cashierDataPerLine.setBreaks()[2], normalColumnWidth));
     }
-
     counterForLoading++;
+
+
+
+
+
 };
 
+function limitTheRolesAllowedForBreaks(role){
+    switch (role) {
+        case "Express Cashier":
+        case "Regular Cashier":
+        case "Courtesy Clerk":
+        case "Supervisor":
+        case "CSM":
+        case "Cash and Sales":
+        case "Easy Scan Cashier":
+        case "Office Teammate":
+        case "Shopper":
+            return true;
+    
+        default:
+            return false;
+    }
+}
+
+function checkRoleForLaneAssignment(role){
+    switch (role) {
+        case "Express Cashier":
+        case "Regular Cashier":
+        case "Courtesy Clerk":
+        case "Supervisor":
+            return true;   
+        default:
+            return false;
+    }
+}
 
 /* Sample JSON DATA
 __EMPTY: "DZIEDZIC, TIMOTHY M"
