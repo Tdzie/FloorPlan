@@ -11,6 +11,8 @@ var counterForLoading = 0;
 //Arrays for storing cashiers
 var _arrForCashiers;
 var breaktimeCashierName = [];
+var arrayOfCashiers = [];
+
 
 // for lane assignments
 var lanes = new registers;
@@ -71,35 +73,46 @@ function ProcessExcel(data) {
 
     console.log(_arrForCashiers);
     
-    var arrayOfCashiers = [];
 
     //Starting index of 4 is the first occurance of the employees.
 
     while(counterForjsonLoop < excelRows.length){
         arrayOfCashiers.push(buildCashier(excelRows[counterForjsonLoop]));
+
+        lanes.buildArrayOfCashierForLaneAssignments([
+            getTwentyFourHourTimeForBreakArray(excelRows[counterForjsonLoop].__EMPTY_5),
+            getTwentyFourHourTimeForBreakArray(excelRows[counterForjsonLoop].__EMPTY_6),
+            splitFullNameIntoLast(excelRows[counterForjsonLoop].__EMPTY),
+            splitFullNameIntoFirst(excelRows[counterForjsonLoop].__EMPTY),
+            excelRows[counterForjsonLoop].__EMPTY_4]
+        )
         counterForjsonLoop++; 
     }
-
+    lanes.assignRegister();
+    lanes.logArray();
     arrayOfCashiers.forEach((item) =>{main(item)});
-
+    // sort the array of cashier for breaks
     breaktimeCashierName.sort((a,b) => a[0] - b[0]);
 
     console.log(arrayOfCashiers);
     console.log(breaktimeCashierName);
 
+    // create and add a div for sorted break time by cashier container
     var breakTimeDiv = document.createElement("div");
     breakTimeDiv.classList = "breakTimeDiv d-flex flex-column flex-wrap";
     breakTimeDiv.id = "breakDiv";
     containerForCashierData.appendChild(breakTimeDiv);
     var breakDiv = document.getElementById("breakDiv");
 
+    // Add sorted list of cashiers in a list at the bottom of the lane assignments
     if(limitRolesForBreaks.checked){
-        breaktimeCashierName.forEach((item) => {if(limitTheRolesAllowedForBreaks(item[4])){ breakDiv.appendChild(addColumn(item[1] + " | " + item[3] + " |    " + item[2], normalColumnWidthTextAlignLeft))}});
+        breakDiv.appendChild(addColumn("<strong>Breaks and lunches sorted by time</strong>", normalColumnWidth));
+        breaktimeCashierName.forEach((item) => { if (limitTheRolesAllowedForBreaks(item[4])) { breakDiv.appendChild(addColumn("&emsp;" + item[1] + " | " + item[3] + " |    " + item[2], normalColumnWidthTextAlignLeft))}});
     }else{
-        breaktimeCashierName.forEach((item) => {breakDiv.appendChild(addColumn(item[1] + " | " + item[3] + " |    " + item[2], normalColumnWidthTextAlignLeft))});
+        breaktimeCashierName.forEach((item) => {breakDiv.appendChild(addColumn("&emsp;" + item[1] + " | " + item[3] + " |    " + item[2], normalColumnWidthTextAlignLeft))});
     }
 
-
+    // Add the end time of each register at the back of the list of breaks
     breakDiv.appendChild(addColumn(lanes.lanesUsedByEndTime,normalColumnWidth))
 }
 
@@ -115,13 +128,19 @@ function main(cashierDataPerLine){
     grabRow.append(addColumn(`${cashierDataPerLine.employeeFirstName} ${cashierDataPerLine.employeeLastName}`, wideColumnWidth));
     //Lane Assignment
     if(checkRoleForLaneAssignment(cashierDataPerLine.employeeRole)){
-        grabRow.append(addColumn(lanes.assignRegister(getTwentyFourHourTimeForBreakArray(cashierDataPerLine.employeeStartTime),getTwentyFourHourTimeForBreakArray(cashierDataPerLine.employeeEndTime),cashierDataPerLine.employeeRole),normalColumnWidth)); 
+
+        lanes.cashierWithLanesAssigned.forEach((element)=>{
+            if(element[3] == cashierDataPerLine.employeeFirstName && element[2] == cashierDataPerLine.employeeLastName){
+                grabRow.append(addColumn(element[5], normalColumnWidth)); 
+            }
+        });
+
     }else{
         grabRow.append(addColumn(` `,normalColumnWidth));
     }
     //Role
     grabRow.append(addColumn(cashierDataPerLine.employeeRole.split(" ")[0], normalColumnWidthTextAlignLeft));
-    //Startoing time
+    //Starting time
     grabRow.append(addColumn(cashierDataPerLine.employeeStartTime, normalColumnWidth));
     //Ending Time
     grabRow.append(addColumn(cashierDataPerLine.employeeEndTime, normalColumnWidth));
@@ -182,6 +201,7 @@ function checkRoleForLaneAssignment(role){
             return false;
     }
 }
+
 
 /* Sample JSON DATA
 __EMPTY: "DZIEDZIC, TIMOTHY M"

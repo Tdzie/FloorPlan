@@ -3,7 +3,7 @@
 class registers {
 
     lane6 = 0;
-    lane7 = 8.15;
+    lane7 = 8;
     lane8 = 0;
     lane9 = 0;
     lane10 = 0;
@@ -12,46 +12,93 @@ class registers {
     lane13 = 0;
     lane14 = 0;
 
+    #cashiers = [];
 
+    #normalLaneAssigned = false;
 
     constructor(){}
+/*
+    0: "7.30"
+    1: "16.00"
+    2: "TIMOTHY"
+    3: "DZIEDZIC"
+    4: "CSM"
+*/
+    buildArrayOfCashierForLaneAssignments(cashier){
+        if(checkRoleForLaneAssignment(cashier[4])){
+            this.#cashiers.push(cashier);
+            this.#cashiers.sort((a,b) => a[0] - b[0]);
+        }
+    }
+
+    logArray(){
+    console.log(this.#cashiers);
+    }
 
     //Accepts starting time, ending time.
     //Must return lane number.
-    assignRegister(startTime, endTime, role){
-        if(role == "Supervisor"){
-            this.lane12 = endTime;
-            return "12";
-        }
-       startTime = parseFloat(startTime);
-       endTime = parseFloat(endTime);
-        if(this.lane7 <= startTime){
+   
+    assignRegister(){ 
+        this.#cashiers.forEach(element => {
+            if(this.checkRoleForLaneAssignment(element[4])){
+
+            let startTime = parseFloat(element[0]);
+            let endTime = parseFloat(element[1]);
+
+            if(element[4] == "Supervisor"){
+            this.lane12 = element[1];
+            element.push("12");
+        }else{
+  
+        if(this.lane7 <= startTime && element[1] != 23.00 && this.#normalLaneAssigned){
             this.lane7 = endTime;
-            return "7";
-        }else if(this.lane10 <= startTime){
+            element.push("7");
+        }else if(this.lane10 <= startTime && element[1] != 23.00){
             this.lane10 = endTime;
-            return "10";
-        }else if(this.lane8 <= startTime){
+            element.push("10");
+            if(startTime >= 8){
+                this.#normalLaneAssigned = true;  
+            }
+
+        }else if(this.lane8 <= startTime && (element[1] <= 17.00 || element[1] == 23.00)){
             this.lane8 = endTime;
-            return "8";
+            element.push("8");
+            if(startTime >= 8){
+                this.#normalLaneAssigned = true;  
+            }
         }else if(this.lane11 <= startTime){
             this.lane11 = endTime;
-            return "11";
+            element.push("11");
+            if(startTime >= 8){
+                this.#normalLaneAssigned = true;  
+            }
         }else if(this.lane9 <= startTime){
             this.lane9 = endTime;
-            return "9";
+            element.push("9");
+            if(startTime >= 8){
+                this.#normalLaneAssigned = true;  
+            }
         }else if(this.lane13 <= startTime){
             this.lane13 = endTime;
-            return "13";
+            element.push("13");
+            if(startTime >= 8){
+                this.#normalLaneAssigned = true;  
+            }
         }else if(this.lane14 <= startTime){
             this.lane14 = endTime;
-            return "14";
+            element.push("14");
+            if(startTime >= 8){
+                this.#normalLaneAssigned = true;  
+            }
         }else if(this.lane6 <= startTime){
             this.lane6 = endTime;
-            return "6";
+            element.push("6");
+            
         }else{
-            return "B";
+            element.push("B");
         }
+         }}});
+   
         
     }
 
@@ -68,7 +115,7 @@ class registers {
     }
 
     get lanesUsedByEndTime(){
-        let lanes = "";
+        let lanes = "<strong>Ending time by lane number</strong><br>";
         if(this.lane6 != 0){
             lanes += `Register #6 | ${this.#convertToTime(String(this.lane6))} <br>`;
         }
@@ -100,5 +147,20 @@ class registers {
 
     }
 
+    get cashierWithLanesAssigned(){
+        return this.#cashiers;
+    }
+
+    checkRoleForLaneAssignment(role){
+    switch (role) {
+        case "Express Cashier":
+        case "Regular Cashier":
+        case "Courtesy Clerk":
+        case "Supervisor":
+            return true;   
+        default:
+            return false;
+    }
+}
 
 }
