@@ -113,7 +113,7 @@ function ProcessExcel(data) {
     }
 
     // Add the end time of each register at the back of the list of breaks
-    breakDiv.appendChild(addColumn(lanes.lanesUsedByEndTime,normalColumnWidth))
+    breakDiv.appendChild(addColumn("&emsp;" + lanes.lanesUsedByEndTime,normalColumnWidthTextAlignLeft))
 }
 
 function main(cashierDataPerLine){

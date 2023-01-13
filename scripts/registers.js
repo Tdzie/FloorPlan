@@ -3,14 +3,23 @@
 class registers {
 
     lane6 = 0;
+    lane6Array =[];
     lane7 = 8;
+    lane7Array = [];
     lane8 = 0;
+    lane8Array = [];
     lane9 = 0;
+    lane9Array = [];
     lane10 = 0;
+    lane10Array = [];
     lane11 = 0;
+    lane11Array = [];
     lane12 = 0;
+    lane12Array = [];
     lane13 = 0;
+    lane13Array = [];
     lane14 = 0;
+    lane14Array = [];
 
     #cashiers = [];
 
@@ -33,6 +42,7 @@ class registers {
 
     logArray(){
     console.log(this.#cashiers);
+    console.log(this.lane10Array);
     }
 
     //Accepts starting time, ending time.
@@ -47,51 +57,61 @@ class registers {
 
             if(element[4] == "Supervisor"){
             this.lane12 = element[1];
+            this.lane12Array.push([this.#convertToTime(String(startTime)), this.#convertToTime(String(endTime)), element[2],element[3]]);
             element.push("12");
         }else{
   
         if(this.lane7 <= startTime && element[1] != 23.00 && this.#normalLaneAssigned){
             this.lane7 = endTime;
+            this.lane7Array.push([this.#convertToTime(String(startTime)), this.#convertToTime(String(endTime)), element[2],element[3]]);
             element.push("7");
         }else if(this.lane10 <= startTime && element[1] != 23.00){
             this.lane10 = endTime;
+            this.lane10Array.push([this.#convertToTime(String(startTime)), this.#convertToTime(String(endTime)), element[2],element[3]]);
             element.push("10");
+
             if(startTime >= 8){
                 this.#normalLaneAssigned = true;  
             }
 
         }else if(this.lane8 <= startTime && (element[1] <= 17.00 || element[1] == 23.00)){
             this.lane8 = endTime;
+            this.lane8Array.push([this.#convertToTime(String(startTime)), this.#convertToTime(String(endTime)), element[2],element[3]]);
             element.push("8");
             if(startTime >= 8){
                 this.#normalLaneAssigned = true;  
             }
         }else if(this.lane11 <= startTime){
             this.lane11 = endTime;
+            this.lane11Array.push([this.#convertToTime(String(startTime)), this.#convertToTime(String(endTime)), element[2],element[3]]);
             element.push("11");
             if(startTime >= 8){
                 this.#normalLaneAssigned = true;  
             }
         }else if(this.lane9 <= startTime){
             this.lane9 = endTime;
+            this.lane9Array.push([this.#convertToTime(String(startTime)), this.#convertToTime(String(endTime)), element[2],element[3]]);
             element.push("9");
             if(startTime >= 8){
                 this.#normalLaneAssigned = true;  
             }
         }else if(this.lane13 <= startTime){
             this.lane13 = endTime;
+            this.lane13Array.push([this.#convertToTime(String(startTime)), this.#convertToTime(String(endTime)), element[2],element[3]]);
             element.push("13");
             if(startTime >= 8){
                 this.#normalLaneAssigned = true;  
             }
         }else if(this.lane14 <= startTime){
             this.lane14 = endTime;
+            this.lane14Array.push([this.#convertToTime(String(startTime)), this.#convertToTime(String(endTime)), element[2],element[3]]);
             element.push("14");
             if(startTime >= 8){
                 this.#normalLaneAssigned = true;  
             }
         }else if(this.lane6 <= startTime){
             this.lane6 = endTime;
+            this.lane6.push([this.#convertToTime(String(startTime)), this.#convertToTime(String(endTime)), element[2],element[3]]);
             element.push("6");
             
         }else{
@@ -103,8 +123,8 @@ class registers {
     }
 
     #convertToTime(time){
-        let hour = time.slice(0,2);
-        let minute = time.slice(4,5) != undefined ? time.slice(3,5).padEnd(2,"0") : "00";
+        let hour = time.split(".")[0] < 10 ? time.slice(0,1) : time.slice(0,2);
+        let minute = time.split(".")[1] > 0 ? time.split(".")[1].padEnd(2,"0") : "00";
         time = hour +":"+ minute;
         let starting = new Date("1/1/2023 " + time);
         var hours = starting.getHours();
@@ -115,33 +135,75 @@ class registers {
     }
 
     get lanesUsedByEndTime(){
-        let lanes = "<strong>Ending time by lane number</strong><br>";
+        let lanes = "<strong>Registers by time</strong><br>";
         if(this.lane6 != 0){
-            lanes += `Register #6 | ${this.#convertToTime(String(this.lane6))} <br>`;
+
+            lanes += `&nbsp;&nbsp;&nbsp;&nbsp;<strong>#6</strong> `;
+            this.lane6Array.forEach(element =>{
+                lanes += `&nbsp;| <strong>${element[0]}</strong> ${element[2]} <strong>${element[1]}</strong>`
+            })
+            lanes += `<br>`;
         }
         if(this.lane7 != 0){
-            lanes += `Register #7 | ${this.#convertToTime(String(this.lane7))} <br>`;
+
+            lanes += `&nbsp;&nbsp;&nbsp;&nbsp;<strong>#7</strong> `;
+            this.lane7Array.forEach(element =>{
+                lanes += `&nbsp;| <strong>${element[0]}</strong> ${element[2]} <strong>${element[1]}</strong>`
+            })
+            lanes += `<br>`;
         }
         if(this.lane8 != 0){
-            lanes += `Register #8 | ${this.#convertToTime(String(this.lane8))} <br>`;
+            
+            lanes += `&nbsp;&nbsp;&nbsp;&nbsp;<strong>#8</strong> `;
+            this.lane8Array.forEach(element =>{
+                lanes += `&nbsp;| <strong>${element[0]}</strong> ${element[2]} <strong>${element[1]}</strong>`
+            })
+            lanes += `<br>`;
+
         }
         if(this.lane9 != 0){
-            lanes += `Register #9 | ${this.#convertToTime(String(this.lane9))} <br>`;
+            
+            lanes += `&nbsp;&nbsp;&nbsp;&nbsp;<strong>#9</strong> `;
+            this.lane9Array.forEach(element =>{
+                lanes += `&nbsp;| <strong>${element[0]}</strong> ${element[2]} <strong>${element[1]}</strong>`
+            })
+            lanes += `<br>`;
+
         }
         if(this.lane10 != 0){
-            lanes += `Register #10 | ${this.#convertToTime(String(this.lane10))} <br>`;
+            lanes += `&nbsp;&nbsp;&nbsp;&nbsp;<strong>#10</strong> `;
+            this.lane10Array.forEach(element =>{
+                lanes += `&nbsp;| <strong>${element[0]}</strong> ${element[2]} <strong>${element[1]}</strong>`
+            })
+            lanes += `<br>`;
         }
         if(this.lane11 != 0){
-            lanes += `Register #11 | ${this.#convertToTime(String(this.lane11))} <br>`;
+           lanes += `&nbsp;&nbsp;&nbsp;&nbsp;<strong>#11</strong> `;
+            this.lane11Array.forEach(element =>{
+                lanes += `&nbsp;| <strong>${element[0]}</strong> ${element[2]} <strong>${element[1]}</strong>`
+            })
+            lanes += `<br>`; 
         }
         if(this.lane12 != 0){
-            lanes += `Register #12 | ${this.#convertToTime(String(this.lane12))} <br>`;
+            lanes += `&nbsp;&nbsp;&nbsp;&nbsp;<strong>#12</strong> `;
+            this.lane12Array.forEach(element =>{
+                lanes += `&nbsp;| <strong>${element[0]}</strong> ${element[2]} <strong>${element[1]}</strong>`
+            })
+            lanes += `<br>`;
         }
         if(this.lane13 != 0){
-            lanes += `Register #13 | ${this.#convertToTime(String(this.lane13))} <br>`;
+            lanes += `&nbsp;&nbsp;&nbsp;&nbsp;<strong>#13</strong> `;
+            this.lane13Array.forEach(element =>{
+                lanes += `&nbsp;| <strong>${element[0]}</strong> ${element[2]} <strong>${element[1]}</strong>`
+            })
+            lanes += `<br>`;
         }
         if(this.lane14 != 0){
-            lanes += `Register #14 | ${this.#convertToTime(String(this.lane14))}`;
+            lanes += `&nbsp;&nbsp;&nbsp;&nbsp;<strong>#14</strong> `;
+            this.lane14Array.forEach(element =>{
+                lanes += `&nbsp;| <strong>${element[0]}</strong> ${element[2]} <strong>${element[1]}</strong>`
+            })
+            lanes += `<br>`;
         }
         return lanes;
 
