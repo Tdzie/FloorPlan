@@ -111,7 +111,7 @@ class registers {
             }
         }else if(this.lane6 <= startTime){
             this.lane6 = endTime;
-            this.lane6.push([this.#convertToTime(String(startTime)), this.#convertToTime(String(endTime)), element[2],element[3]]);
+            this.lane6Array.push([this.#convertToTime(String(startTime)), this.#convertToTime(String(endTime)), element[2],element[3]]);
             element.push("6");
             
         }else{
