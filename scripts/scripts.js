@@ -242,7 +242,7 @@ function buildCashier(cashierData){
     splitFullNameIntoLast(cashierData.__EMPTY),
     getTwentyFourHourTime(cashierData.__EMPTY_8),
     getTwentyFourHourTime(cashierData.__EMPTY_9),
-    cashierData.__EMPTY_7);
+    cashierData.__EMPTY_5);
 }
 
 // return 24 hour time
