@@ -78,7 +78,11 @@ function ProcessExcel(data) {
 
     while(counterForjsonLoop < excelRows.length){
         arrayOfCashiers.push(buildCashier(excelRows[counterForjsonLoop]));
-
+        console.log(excelRows[counterForjsonLoop].__EMPTY_5)
+        console.log(excelRows[counterForjsonLoop].__EMPTY_6)
+        console.log(excelRows[counterForjsonLoop].__EMPTY_7)
+        console.log(excelRows[counterForjsonLoop].__EMPTY_8)
+        console.log(excelRows[counterForjsonLoop].__EMPTY_9)
         lanes.buildArrayOfCashierForLaneAssignments([
             getTwentyFourHourTimeForBreakArray(excelRows[counterForjsonLoop].__EMPTY_8),
             getTwentyFourHourTimeForBreakArray(excelRows[counterForjsonLoop].__EMPTY_9),
