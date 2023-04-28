@@ -88,7 +88,7 @@ function ProcessExcel(data) {
             getTwentyFourHourTimeForBreakArray(excelRows[counterForjsonLoop].__EMPTY_9),
             splitFullNameIntoLast(excelRows[counterForjsonLoop].__EMPTY),
             splitFullNameIntoFirst(excelRows[counterForjsonLoop].__EMPTY),
-            excelRows[counterForjsonLoop].__EMPTY_7]
+            excelRows[counterForjsonLoop].__EMPTY_5]
         )
         counterForjsonLoop++; 
     }
