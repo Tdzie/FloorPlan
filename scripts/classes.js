@@ -13,6 +13,8 @@ class employee {
     get employeeLastName(){
         return this.#lastName;
     }
+
+
 }
 
 
@@ -22,9 +24,10 @@ class cashier extends employee{
     #role;
     #shiftLength;
     #shiftInMilli;
+    #number;
     oneBreak = false;
     oneBreakOneLunch = false;
-    constructor(firstName, lastName, startTime, endTime, role){
+    constructor(firstName, lastName, startTime, endTime, role, number){
         super(firstName,lastName);
         this.#startTime = new Date("1/1/2023 " + startTime);
         this.#endTime = new Date("1/1/2023 " + endTime);
@@ -34,10 +37,12 @@ class cashier extends employee{
         this.oneBreakOneLunch = this.#shiftLength.replace(":","") > 600 && this.#shiftLength.replace(":","") < 830;
       
         this.#shiftInMilli = (this.#endTime.getTime() - this.#startTime.getTime());
-
+        this.#number = number;
     }
    
-
+    get employeeNumber() {
+        return this.#number;
+    }
     setBreaks(){
 
                 // Start

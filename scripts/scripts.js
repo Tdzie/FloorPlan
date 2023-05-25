@@ -71,20 +71,23 @@ function ProcessExcel(data) {
     var excelRows = XLSX.utils.sheet_to_row_object_array(workbook.Sheets[firstSheet]);
     _arrForCashiers = excelRows;
 
-    console.log(_arrForCashiers);
+   // console.log(_arrForCashiers);
     
-
+    document.getElementById('dayAndDate').innerHTML = excelRows[3].__EMPTY;
     //Starting index of 4 is the first occurance of the employees.
 
     while(counterForjsonLoop < excelRows.length){
-        arrayOfCashiers.push(buildCashier(excelRows[counterForjsonLoop]));
+
+
+        arrayOfCashiers.push(buildCashier(excelRows[counterForjsonLoop], counterForjsonLoop));
 
         lanes.buildArrayOfCashierForLaneAssignments([
             getTwentyFourHourTimeForBreakArray(excelRows[counterForjsonLoop].__EMPTY_8),
             getTwentyFourHourTimeForBreakArray(excelRows[counterForjsonLoop].__EMPTY_9),
             splitFullNameIntoLast(excelRows[counterForjsonLoop].__EMPTY),
             splitFullNameIntoFirst(excelRows[counterForjsonLoop].__EMPTY),
-            excelRows[counterForjsonLoop].__EMPTY_5]
+            excelRows[counterForjsonLoop].__EMPTY_5,
+            counterForjsonLoop]
         )
         counterForjsonLoop++; 
     }
@@ -94,8 +97,8 @@ function ProcessExcel(data) {
     // sort the array of cashier for breaks
     breaktimeCashierName.sort((a,b) => a[0] - b[0]);
 
-    console.log(arrayOfCashiers);
-    console.log(breaktimeCashierName);
+   // console.log(arrayOfCashiers);
+    //console.log(breaktimeCashierName);
 
     // create and add a div for sorted break time by cashier container
     var breakTimeDiv = document.createElement("div");
@@ -130,8 +133,10 @@ function main(cashierDataPerLine){
     if(checkRoleForLaneAssignment(cashierDataPerLine.employeeRole)){
 
         lanes.cashierWithLanesAssigned.forEach((element)=>{
-            if(element[3] == cashierDataPerLine.employeeFirstName && element[2] == cashierDataPerLine.employeeLastName){
-                grabRow.append(addColumn(element[5], normalColumnWidth)); 
+            console.log(element);
+            console.log(cashierDataPerLine.employeeNumber);
+            if (element[5] == cashierDataPerLine.employeeNumber){
+                grabRow.append(addColumn(element[6], normalColumnWidth)); 
             }
         });
 
@@ -232,13 +237,15 @@ if(time[1].spice(1,1) == 9){
 
 
 // build the cashiers from the json array
-function buildCashier(cashierData){
+function buildCashier(cashierData,number){
+    // check if the cashier is already in the array
     return new cashier(
     splitFullNameIntoFirst(cashierData.__EMPTY),
     splitFullNameIntoLast(cashierData.__EMPTY),
     getTwentyFourHourTime(cashierData.__EMPTY_8),
     getTwentyFourHourTime(cashierData.__EMPTY_9),
-    cashierData.__EMPTY_5);
+    cashierData.__EMPTY_5,
+    number);
 }
 
 // return 24 hour time
