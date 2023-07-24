@@ -82,11 +82,11 @@ function ProcessExcel(data) {
         arrayOfCashiers.push(buildCashier(excelRows[counterForjsonLoop], counterForjsonLoop));
 
         lanes.buildArrayOfCashierForLaneAssignments([
-            getTwentyFourHourTimeForBreakArray(excelRows[counterForjsonLoop].__EMPTY_8),
-            getTwentyFourHourTimeForBreakArray(excelRows[counterForjsonLoop].__EMPTY_9),
+            getTwentyFourHourTimeForBreakArray(excelRows[counterForjsonLoop].__EMPTY_5),
+            getTwentyFourHourTimeForBreakArray(excelRows[counterForjsonLoop].__EMPTY_6),
             splitFullNameIntoLast(excelRows[counterForjsonLoop].__EMPTY),
             splitFullNameIntoFirst(excelRows[counterForjsonLoop].__EMPTY),
-            excelRows[counterForjsonLoop].__EMPTY_5,
+            excelRows[counterForjsonLoop].__EMPTY_4,
             counterForjsonLoop]
         )
         counterForjsonLoop++; 
@@ -242,9 +242,9 @@ function buildCashier(cashierData,number){
     return new cashier(
     splitFullNameIntoFirst(cashierData.__EMPTY),
     splitFullNameIntoLast(cashierData.__EMPTY),
-    getTwentyFourHourTime(cashierData.__EMPTY_8),
-    getTwentyFourHourTime(cashierData.__EMPTY_9),
-    cashierData.__EMPTY_5,
+    getTwentyFourHourTime(cashierData.__EMPTY_5),
+    getTwentyFourHourTime(cashierData.__EMPTY_6),
+    cashierData.__EMPTY_4,
     number);
 }
 
