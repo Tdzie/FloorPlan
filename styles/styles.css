@@ -1,15 +1,31 @@
-#containerToFillWithCasherData{
+#containerToFillWithCasherDataMonday,
+#containerToFillWithCasherDataTuesday,
+#containerToFillWithCasherDataWednesday,
+#containerToFillWithCasherDataThursday,
+#containerToFillWithCasherDataFriday,
+#containerToFillWithCasherDataSaturday,
+#containerToFillWithCasherDataSunday{
     font-size: x-small;
 }
 
 
 @media print{
-   #containerToFillWithCasherData{
+   #containerToFillWithCasherDataMonday,
+   #containerToFillWithCasherDataTuesday,
+   #containerToFillWithCasherDataWednesday,
+   #containerToFillWithCasherDataThursday,
+   #containerToFillWithCasherDataFriday,
+   #containerToFillWithCasherDataSaturday,
+   #containerToFillWithCasherDataSunday{
     font-size: x-small;
 } 
 body > header,
 body > div.input-group.mb-3{
     display: none;
+}
+.container {
+    page-break-before: always;
+    max-width: 100%;
 }
 }
 
