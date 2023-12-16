@@ -119,32 +119,32 @@ function ProcessExcel(data) {
     eval.appendChild(day);
     eval.appendChild(analyzeDay(week.Monday));
 
-    day = document.createElement('h3');
+    day = document.createElement('h5');
     day.innerText = "Tuesday";
     eval.appendChild(day);
     eval.appendChild(analyzeDay(week.Tuesday));
 
-    day = document.createElement('h3');
+    day = document.createElement('h5');
     day.innerText = "Wednesday";
     eval.appendChild(day);
     eval.appendChild(analyzeDay(week.Wednesday));
 
-    day = document.createElement('h3');
+    day = document.createElement('h5');
     day.innerText = "Thursday";
     eval.appendChild(day);
     eval.appendChild(analyzeDay(week.Thursday));
 
-    day = document.createElement('h3');
+    day = document.createElement('h5');
     day.innerText = "Friday";
     eval.appendChild(day);
     eval.appendChild(analyzeDay(week.Friday));
 
-    day = document.createElement('h3');
+    day = document.createElement('h5');
     day.innerText = "Saturday";
     eval.appendChild(day);
     eval.appendChild(analyzeDay(week.Saturday));
 
-    day = document.createElement('h3');
+    day = document.createElement('h5');
     day.innerText = "Sunday";
     eval.appendChild(day);
     eval.appendChild(analyzeDay(week.Sunday));
