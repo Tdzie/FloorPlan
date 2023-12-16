@@ -235,7 +235,7 @@ function analyzeDay(day){
                 }
                 break;
             case 'Easy Scan Cashier':
-                    if (startingTime <= 830) {
+                    if (startingTime <= 900) {
                         easyScanAM = true;
                     }else if(endingTime >= 2100){
                         easyScanPM = true;
