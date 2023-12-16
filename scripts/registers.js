@@ -41,8 +41,8 @@ class registers {
     }
 
     logArray(){
-    console.log(this.#cashiers);
-    console.log(this.lane10Array);
+   // console.log(this.#cashiers);
+    //console.log(this.lane10Array);
     }
 
     //Accepts starting time, ending time.

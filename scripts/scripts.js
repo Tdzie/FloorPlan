@@ -111,9 +111,211 @@ function ProcessExcel(data) {
     currentDay = "Sunday";
     setupForMain(week.Sunday);
    
+    // working to add analysis of days
+
+    const eval = document.getElementById('evaluation');
+    let day = document.createElement('h5');
+    day.innerText = "Monday";
+    eval.appendChild(day);
+    eval.appendChild(analyzeDay(week.Monday));
+
+    day = document.createElement('h3');
+    day.innerText = "Tuesday";
+    eval.appendChild(day);
+    eval.appendChild(analyzeDay(week.Tuesday));
+
+    day = document.createElement('h3');
+    day.innerText = "Wednesday";
+    eval.appendChild(day);
+    eval.appendChild(analyzeDay(week.Wednesday));
+
+    day = document.createElement('h3');
+    day.innerText = "Thursday";
+    eval.appendChild(day);
+    eval.appendChild(analyzeDay(week.Thursday));
+
+    day = document.createElement('h3');
+    day.innerText = "Friday";
+    eval.appendChild(day);
+    eval.appendChild(analyzeDay(week.Friday));
+
+    day = document.createElement('h3');
+    day.innerText = "Saturday";
+    eval.appendChild(day);
+    eval.appendChild(analyzeDay(week.Saturday));
+
+    day = document.createElement('h3');
+    day.innerText = "Sunday";
+    eval.appendChild(day);
+    eval.appendChild(analyzeDay(week.Sunday));
+
 }
 
 
+
+function analyzeDay(day){
+    // Opening cashier          6AM
+    let cashierAM = false;
+    // Closing cashier          11PM
+    let cashierPM = false;
+    // Cash and sales           730AM
+    let cashAndSales = false;
+    // Office open              8AM
+    let officeAM = false;
+    // Office close             730PM
+    let officePM = false;
+    // Opening Housekeeping     8AM
+    let housekeepingAM = false;
+    // Closing Housekeeping     9PM
+    let housekeepingPM = false;
+    // Easy scan open           830AM
+    let easyScanAM  = false;
+    // Easy scan close          9PM
+    let easyScanPM = false;
+
+
+    /*
+    __EMPTY: "DZIEDZIC, TIMOTHY M"
+    __EMPTY_4: "CSM"
+    __EMPTY_5: "7:30 AM"
+    __EMPTY_6: "4:00 PM"
+    __EMPTY_7: "12:00 PM"
+    __EMPTY_8: "2"
+    __EMPTY_10: "8.5"
+    */
+
+    /*
+    CSM
+    Cash and Sales
+    Easy Scan Cashier
+    Express Cashier
+    Housekeeping
+    Office Teammate
+    PAC
+    PCC
+    Regular Cashier
+    Supervisor
+    */
+
+    day.forEach((person) => {
+            if(!person.__EMPTY.includes('Schedule')){
+                var startingTime = convertTo24Hour(person.__EMPTY_5);
+                var endingTime = convertTo24Hour(person.__EMPTY_6);
+            }
+
+
+        switch (person.__EMPTY_4) {
+            case 'Regular Cashier':
+            case 'Express Cashier':
+            case 'Supervisor':
+            case 'CSM':
+                if (startingTime <= 600){
+                    cashierAM = true;
+                }else if(endingTime >= 2300){
+                    cashierPM = true;
+                }
+                break;
+            case 'Cash and Sales':
+                if (startingTime <= 730) {
+                    cashAndSales = true;
+                }
+                break;
+            case 'Office Teammate':
+                if (startingTime <= 800) {
+                    officeAM = true;
+                }else if(endingTime >= 1930){
+                    officePM = true;
+                }
+                break;
+            case 'Housekeeping':
+                if(startingTime <= 900){
+                    housekeepingAM = true;
+                }else if(endingTime >= 2100){
+                    housekeepingPM = true;
+                }
+                break;
+            case 'Easy Scan Cashier':
+                    if (startingTime <= 830) {
+                        easyScanAM = true;
+                    }else if(endingTime >= 2100){
+                        easyScanPM = true;
+                    }
+                break;
+            default:
+                break;
+        }
+    })
+    let inner = document.createElement('li');
+    const result = document.createElement('ul');
+    result.classList = "result";
+    if (!cashierAM) {
+        inner = document.createElement('li');
+        inner.innerText = "No opening cashier.";
+        result.appendChild(inner);
+    }
+    if(!cashierPM){
+        inner = document.createElement('li');
+        inner.innerText = "No closing cashier.";
+        result.appendChild(inner);
+    }
+    if (!cashAndSales) {
+        inner = document.createElement('li');
+        inner.innerText = "No cash and sales.";
+        result.appendChild(inner);
+    }
+    if (!officeAM) {
+        inner = document.createElement('li');
+        inner.innerText = "No opening office.";
+        result.appendChild(inner);
+    }
+    if (!officePM) {
+        inner = document.createElement('li');
+        inner.innerText = "No closing office.";
+        result.appendChild(inner);
+    }
+    if (!housekeepingAM) {
+        inner = document.createElement('li');
+        inner.innerText = "No closing maintanence.";
+        result.appendChild(inner);
+    }
+    if (!housekeepingPM) {
+        inner = document.createElement('li');
+        inner.innerText = "No closing maintanence.";
+        result.appendChild(inner);
+    }
+    if (!easyScanAM) {
+        inner = document.createElement('li');
+        inner.innerText = "No opening Easy-scan";
+        result.appendChild(inner);
+    }
+    if (!easyScanPM) {
+        inner = document.createElement('li');
+        inner.innerText = "No closing easy-scan.";
+        result.appendChild(inner);
+    }
+
+    return(result);
+
+}
+
+function convertTo24Hour(timeStr) {
+    const [time, modifier] = timeStr.split(' ');
+    let [hours, minutes] = time.split(':');
+
+    if (hours === '12') {
+        hours = '00';
+    }
+
+    if (modifier === 'PM') {
+        hours = parseInt(hours, 10) + 12;
+    }
+
+    return parseInt(`${hours}${minutes}`, 10);
+}
+
+
+
+// Completed 12/15/23 working with multiple days.
 var breaktimeCashierName = [];
 var arrayOfCashiers = [];
 var lanes = new registers;
@@ -123,7 +325,7 @@ var counterForjsonLoop = 1;
 
 function setupForMain (day){
     containerForCashierData = document.getElementById('containerToFillWithCasherData' + currentDay);
-    console.log(day);
+    //console.log(day);
     // for lane assignments
     lanes = new registers;
     // Loop Counters
