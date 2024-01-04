@@ -64,6 +64,8 @@ function organizeDataByWeekday(data) {
         Sunday: []
     };
 
+
+
     for (const item of data) {
         // Check for a day change
         for (const day of daysOfWeek) {
@@ -81,6 +83,61 @@ function organizeDataByWeekday(data) {
 
     return weekData;
 };
+
+function buildChart(jobTitle, dayOfTheWeek){
+    // Array of job titles "Express Cashier", "Regular Cashier", "Another Job Title"
+    const scheduleManager = new ScheduleManager();
+    scheduleManager.processSchedules(dayOfTheWeek, jobTitle);
+    const slotsArray = scheduleManager.getSlotsAsArray();
+    console.log(slotsArray);
+    const chart = new DivChart(slotsArray);
+
+    const container = chart.createDivs();
+    return container;
+};
+
+function createDropdown(day, info) {
+    var select = document.createElement("select");
+    select.id = "jobRoleSelect" + day;
+
+    // Option values
+    var options = ['Select Role', "Cashiers", "Cash and Sales", "Office Teammate", "Housekeeping", "Supervisors", "CSM", "Easy Scan Cashier", "Close"];
+
+    // Create and append options
+    for (var i = 0; i < options.length; i++) {
+        var option = document.createElement("option");
+        option.value = options[i];
+        option.text = options[i];
+        select.appendChild(option);
+    }
+
+    // Event listener for the select change
+    select.addEventListener('change', function () {
+        // Get the selected job title
+        var jobTitle = this.value;
+        if(jobTitle == 'Cashiers'){
+            jobTitle = ['Regular Cashier', 'Express Cashier'];
+            // Call the buildChart function with the selected job title and day
+            var chartContainer = buildChart(jobTitle, info);
+            // Assuming you have a predefined place in your HTML to display the chart
+            document.getElementById('chartDisplayArea' + day).innerHTML = ''; // Clear previous chart
+            document.getElementById('chartDisplayArea' + day).appendChild(chartContainer);
+        }else if( jobTitle == "Close" || jobTitle == "Select Role"){
+            document.getElementById('chartDisplayArea' + day).innerHTML = ''; // Clear previous chart
+        }else{
+            // Call the buildChart function with the selected job title and day
+            var chartContainer = buildChart(jobTitle, info);
+            // Assuming you have a predefined place in your HTML to display the chart
+            document.getElementById('chartDisplayArea' + day).innerHTML = ''; // Clear previous chart
+            document.getElementById('chartDisplayArea' + day).appendChild(chartContainer);
+        }
+
+    });
+
+    return select;
+}
+
+
 
 var currentDay = "";
 function ProcessExcel(data) {
@@ -116,37 +173,65 @@ function ProcessExcel(data) {
     const eval = document.getElementById('evaluation');
     let day = document.createElement('h5');
     day.innerText = "Monday";
+    let div = document.createElement('div');
+    div.id = 'chartDisplayAreaMonday';
     eval.appendChild(day);
+    eval.appendChild(div);
+    eval.insertBefore(createDropdown('Monday', week.Monday), div);
     eval.appendChild(analyzeDay(week.Monday));
-
+    
     day = document.createElement('h5');
     day.innerText = "Tuesday";
+    div = document.createElement('div');
+    div.id = 'chartDisplayAreaTuesday';
     eval.appendChild(day);
+    eval.appendChild(div);
+    eval.insertBefore(createDropdown('Tuesday', week.Tuesday), div);
     eval.appendChild(analyzeDay(week.Tuesday));
 
     day = document.createElement('h5');
     day.innerText = "Wednesday";
+    div = document.createElement('div');
+    div.id = 'chartDisplayAreaWednesday';
     eval.appendChild(day);
+    eval.appendChild(div);
+    eval.insertBefore(createDropdown('Wednesday', week.Wednesday), div);
     eval.appendChild(analyzeDay(week.Wednesday));
 
     day = document.createElement('h5');
     day.innerText = "Thursday";
+    div = document.createElement('div');
+    div.id = 'chartDisplayAreaThursday';
     eval.appendChild(day);
+    eval.appendChild(div);
+    eval.insertBefore(createDropdown('Thursday', week.Thursday), div);
     eval.appendChild(analyzeDay(week.Thursday));
 
     day = document.createElement('h5');
     day.innerText = "Friday";
+    div = document.createElement('div');
+    div.id = 'chartDisplayAreaFriday';
     eval.appendChild(day);
+    eval.appendChild(div);
+    eval.insertBefore(createDropdown('Friday', week.Friday), div);
     eval.appendChild(analyzeDay(week.Friday));
 
     day = document.createElement('h5');
     day.innerText = "Saturday";
+    div = document.createElement('div');
+    div.id = 'chartDisplayAreaSaturday';
     eval.appendChild(day);
+    eval.appendChild(div);
+    eval.insertBefore(createDropdown('Saturday', week.Saturday), div);
     eval.appendChild(analyzeDay(week.Saturday));
 
     day = document.createElement('h5');
     day.innerText = "Sunday";
+    div = document.createElement('div');
+    div.id = 'chartDisplayAreaSunday';
     eval.appendChild(day);
+    eval.appendChild(div);
+    eval.insertBefore(createDropdown('Sunday', week.Sunday), div);
     eval.appendChild(analyzeDay(week.Sunday));
 
 }
@@ -245,6 +330,11 @@ function analyzeDay(day){
                 break;
         }
     })
+    let cashiers = ['Regular Cashier', 'Express Cashier'];
+    let cashnSales = ['Cash and Sales'];
+    let office = ['Office Teammate'];
+    let Housekeeping = ['Housekeeping'];
+
     let inner = document.createElement('li');
     const result = document.createElement('ul');
     result.classList = "result";
@@ -252,26 +342,32 @@ function analyzeDay(day){
         inner = document.createElement('li');
         inner.innerText = "No opening cashier.";
         result.appendChild(inner);
+        console.log(day);
+        //result.appendChild(buildChart(cashiers, day));
     }
     if(!cashierPM){
         inner = document.createElement('li');
         inner.innerText = "No closing cashier.";
         result.appendChild(inner);
+       // result.appendChild(buildChart(cashiers, day));
     }
     if (!cashAndSales) {
         inner = document.createElement('li');
         inner.innerText = "No cash and sales.";
         result.appendChild(inner);
+        //result.appendChild(buildChart(cashnSales, day));
     }
     if (!officeAM) {
         inner = document.createElement('li');
         inner.innerText = "No opening office.";
         result.appendChild(inner);
+        //result.appendChild(buildChart(office, day));
     }
     if (!officePM) {
         inner = document.createElement('li');
         inner.innerText = "No closing office.";
         result.appendChild(inner);
+       // result.appendChild(buildChart(office, day));
     }
     if (!housekeepingAM) {
         inner = document.createElement('li');
@@ -554,3 +650,18 @@ function addColumn(cashier, widthOfCol){
     return buildCol;
 };
 
+document.addEventListener("DOMContentLoaded", function () {
+    // Get the button that opens the popup
+    var btn = document.getElementById("selectButton");
+
+    // Get the popup window element
+    var popup = document.getElementById("popupWindow");
+
+    // Event listener to open the popup
+    btn.addEventListener("click", function () {
+        popup.style.display = "block";
+    });
+
+    // You can add more functionality here like closing the popup
+    // when clicking outside of it or on a close button.
+});
