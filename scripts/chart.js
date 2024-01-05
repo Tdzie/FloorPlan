@@ -25,8 +25,8 @@ class DivChart {
         let outerContainer = document.createElement('div');
         outerContainer.style.display = 'flex';
 
-        let yAxisContainer = this.createYAxis();
-        outerContainer.appendChild(yAxisContainer);
+        //let yAxisContainer = this.createYAxis();
+        //outerContainer.appendChild(yAxisContainer);
 
         let chartContainer = this.createChart();
         outerContainer.appendChild(chartContainer);
@@ -51,15 +51,18 @@ class DivChart {
         4, 15, 30, 45, 5, 15, 30, 45, 6, 15, 30, 45, 7, 15, 30, 45, 8, 15, 30, 45, 9, 15, 30, 45, 10, 15, 30, 45,11];
 
     createChart() {
+
         let chartContainer = document.createElement('div');
         chartContainer.style.display = 'flex';
         chartContainer.style.alignItems = 'flex-end';
         chartContainer.style.height = '300px';
         chartContainer.style.gap = '1px';
-        chartContainer.style.width = '1400px';
+       // chartContainer.style.width = '1200px';
 
         let max = Math.max(...this.arr);
-
+        if(max < 5){
+            max = 5;
+        }
         for (let i = 0; i < this.arr.length -1; i++) {
             chartContainer.appendChild(this.createBar(i, max));
             /*
@@ -68,25 +71,48 @@ class DivChart {
             }
             */
         }
+
         return chartContainer;
     }
     
-
+    boldValues = [1,2,3,4,5,6,7,8,9,10,11,12];
+    
     createBar(index, max) {
         let div = document.createElement('div');
-        div.style.height = `${this.arr[index] / max * 100}%`;
-        div.style.width = '30px';
+        if (this.arr[index] != 0) {
+            div.style.height = `${this.arr[index] / max * 100}%`;
+        }else{
+            div.style.height = `8%`;
+            div.style.opacity = `50%`;
+        } 
+        
+        div.style.width = '18px';
         div.style.backgroundColor = this.getColorForHour(index);
-        //div.style.opacity = 1 - (index % 4) * 0.25;
+        // = 1 - (index % 4) * 0.25;
         //div.style.fontSize = 'small';
         div.style.display = 'flex';
-        div.style.alignItems = 'flex-end';
-        div.style.justifyContent = 'center';
-       // let span = document.createElement('span');
-        //span.style.opacity = '1';
-        //span.style.zIndex = '1111111';
-        div.innerText = this.hourValues[index];
-        //div.appendChild(span);
+        div.style.alignItems = 'center';
+        div.style.justifyContent = 'space-between';
+        div.style.flexDirection = 'column';
+
+        let span = document.createElement('span');
+        let number = this.arr[index];
+        if(number != 0){
+         span.innerText = number;  
+        }
+        div.appendChild(span);
+
+        span = document.createElement('span');
+        let time = this.hourValues[index];
+        span.innerText = time;
+        if(this.boldValues.includes(time)){
+            span.style.fontWeight = '600';
+        }else{
+            span.style.fontWeight = '400';
+        }
+        
+        div.appendChild(span);
+
         return div;
     }
 
