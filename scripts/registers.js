@@ -61,7 +61,7 @@ class registers {
             element.push("12");
         }else{
   
-        if(this.lane7 <= startTime && element[1] != 23.00 && this.#normalLaneAssigned){
+        if(this.lane7 <= startTime && element[1] != 23.00 && this.#normalLaneAssigned && element[2] != "Roseann"){
             this.lane7 = endTime;
             this.lane7Array.push([this.#convertToTime(String(startTime)), this.#convertToTime(String(endTime)), element[2],element[3]]);
             element.push("7");
