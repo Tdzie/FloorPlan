@@ -1,227 +1,116 @@
-
-
-class registers {
-
-    lane6 = 0;
-    lane6Array =[];
-    lane7 = 8;
-    lane7Array = [];
-    lane8 = 0;
-    lane8Array = [];
-    lane9 = 0;
-    lane9Array = [];
-    lane10 = 0;
-    lane10Array = [];
-    lane11 = 0;
-    lane11Array = [];
-    lane12 = 0;
-    lane12Array = [];
-    lane13 = 0;
-    lane13Array = [];
-    lane14 = 0;
-    lane14Array = [];
-
-    #cashiers = [];
-
-    #normalLaneAssigned = false;
-
-    constructor(){}
 /*
-    0: "7.30"
-    1: "16.00"
-    2: "TIMOTHY"
-    3: "DZIEDZIC"
-    4: "CSM"
-*/
-    buildArrayOfCashierForLaneAssignments(cashier){
-        if(checkRoleForLaneAssignment(cashier[4])){
-            this.#cashiers.push(cashier);
-            this.#cashiers.sort((a,b) => a[0] - b[0]);
-        }
-    }
+Registers js. This program file holds a priority queue implementation with a Greedy Lane Assignment
+ */
 
-    logArray(){
-   // console.log(this.#cashiers);
-    //console.log(this.lane10Array);
-    }
-
-    //Accepts starting time, ending time.
-    //Must return lane number.
-   
-    assignRegister(){ 
-        this.#cashiers.forEach(element => {
-            if(this.checkRoleForLaneAssignment(element[4])){
-
-            let startTime = parseFloat(element[0]);
-            let endTime = parseFloat(element[1]);
-
-            if(element[4] == "Supervisor"){
-            this.lane12 = element[1];
-            this.lane12Array.push([this.#convertToTime(String(startTime)), this.#convertToTime(String(endTime)), element[2],element[3]]);
-            element.push("12");
-        }else{
-  
-        if(this.lane7 <= startTime && element[1] != 23.00 && this.#normalLaneAssigned && element[2] != "Roseann"){
-            this.lane7 = endTime;
-            this.lane7Array.push([this.#convertToTime(String(startTime)), this.#convertToTime(String(endTime)), element[2],element[3]]);
-            element.push("7");
-        }else if(this.lane10 <= startTime && element[1] != 23.00){
-            this.lane10 = endTime;
-            this.lane10Array.push([this.#convertToTime(String(startTime)), this.#convertToTime(String(endTime)), element[2],element[3]]);
-            element.push("10");
-
-            if(startTime >= 8){
-                this.#normalLaneAssigned = true;  
-            }
-
-        }else if(this.lane8 <= startTime && (element[1] <= 17.00 || element[1] == 23.00)){
-            this.lane8 = endTime;
-            this.lane8Array.push([this.#convertToTime(String(startTime)), this.#convertToTime(String(endTime)), element[2],element[3]]);
-            element.push("8");
-            if(startTime >= 8){
-                this.#normalLaneAssigned = true;  
-            }
-        }else if(this.lane11 <= startTime){
-            this.lane11 = endTime;
-            this.lane11Array.push([this.#convertToTime(String(startTime)), this.#convertToTime(String(endTime)), element[2],element[3]]);
-            element.push("11");
-            if(startTime >= 8){
-                this.#normalLaneAssigned = true;  
-            }
-        }else if(this.lane9 <= startTime){
-            this.lane9 = endTime;
-            this.lane9Array.push([this.#convertToTime(String(startTime)), this.#convertToTime(String(endTime)), element[2],element[3]]);
-            element.push("9");
-            if(startTime >= 8){
-                this.#normalLaneAssigned = true;  
-            }
-        }else if(this.lane13 <= startTime){
-            this.lane13 = endTime;
-            this.lane13Array.push([this.#convertToTime(String(startTime)), this.#convertToTime(String(endTime)), element[2],element[3]]);
-            element.push("13");
-            if(startTime >= 8){
-                this.#normalLaneAssigned = true;  
-            }
-        }else if(this.lane14 <= startTime){
-            this.lane14 = endTime;
-            this.lane14Array.push([this.#convertToTime(String(startTime)), this.#convertToTime(String(endTime)), element[2],element[3]]);
-            element.push("14");
-            if(startTime >= 8){
-                this.#normalLaneAssigned = true;  
-            }
-        }else if(this.lane6 <= startTime){
-            this.lane6 = endTime;
-            this.lane6Array.push([this.#convertToTime(String(startTime)), this.#convertToTime(String(endTime)), element[2],element[3]]);
-            element.push("6");
-            
-        }else{
-            element.push("B");
-        }
-         }}});
-   
-        
-    }
-
-    #convertToTime(time){
-        let hour = time.split(".")[0] < 10 ? time.slice(0,1) : time.slice(0,2);
-        let minute = time.split(".")[1] > 0 ? time.split(".")[1].padEnd(2,"0") : "00";
-        time = hour +":"+ minute;
-        let starting = new Date("1/1/2023 " + time);
-        var hours = starting.getHours();
-        var AmOrPm = hours >= 12 ? 'PM' : 'AM';
-        hours = (hours % 12) || 12;
-        var minutes = starting.getMinutes();
-        return hours + ":" + minutes.toString().padStart(2, "0") + " " + AmOrPm;
-    }
-
-    get lanesUsedByEndTime(){
-        let lanes = "<strong>Registers by time</strong><br>";
-        if(this.lane6 != 0){
-
-            lanes += `&nbsp;&nbsp;&nbsp;&nbsp;<strong>#6</strong> `;
-            this.lane6Array.forEach(element =>{
-                lanes += `&nbsp;| <strong>${element[0]}</strong> ${element[2]} <strong>${element[1]}</strong>`
-            })
-            lanes += `<br>`;
-        }
-        if(this.lane7 != 0){
-
-            lanes += `&nbsp;&nbsp;&nbsp;&nbsp;<strong>#7</strong> `;
-            this.lane7Array.forEach(element =>{
-                lanes += `&nbsp;| <strong>${element[0]}</strong> ${element[2]} <strong>${element[1]}</strong>`
-            })
-            lanes += `<br>`;
-        }
-        if(this.lane8 != 0){
-            
-            lanes += `&nbsp;&nbsp;&nbsp;&nbsp;<strong>#8</strong> `;
-            this.lane8Array.forEach(element =>{
-                lanes += `&nbsp;| <strong>${element[0]}</strong> ${element[2]} <strong>${element[1]}</strong>`
-            })
-            lanes += `<br>`;
-
-        }
-        if(this.lane9 != 0){
-            
-            lanes += `&nbsp;&nbsp;&nbsp;&nbsp;<strong>#9</strong> `;
-            this.lane9Array.forEach(element =>{
-                lanes += `&nbsp;| <strong>${element[0]}</strong> ${element[2]} <strong>${element[1]}</strong>`
-            })
-            lanes += `<br>`;
-
-        }
-        if(this.lane10 != 0){
-            lanes += `&nbsp;&nbsp;&nbsp;&nbsp;<strong>#10</strong> `;
-            this.lane10Array.forEach(element =>{
-                lanes += `&nbsp;| <strong>${element[0]}</strong> ${element[2]} <strong>${element[1]}</strong>`
-            })
-            lanes += `<br>`;
-        }
-        if(this.lane11 != 0){
-           lanes += `&nbsp;&nbsp;&nbsp;&nbsp;<strong>#11</strong> `;
-            this.lane11Array.forEach(element =>{
-                lanes += `&nbsp;| <strong>${element[0]}</strong> ${element[2]} <strong>${element[1]}</strong>`
-            })
-            lanes += `<br>`; 
-        }
-        if(this.lane12 != 0){
-            lanes += `&nbsp;&nbsp;&nbsp;&nbsp;<strong>#12</strong> `;
-            this.lane12Array.forEach(element =>{
-                lanes += `&nbsp;| <strong>${element[0]}</strong> ${element[2]} <strong>${element[1]}</strong>`
-            })
-            lanes += `<br>`;
-        }
-        if(this.lane13 != 0){
-            lanes += `&nbsp;&nbsp;&nbsp;&nbsp;<strong>#13</strong> `;
-            this.lane13Array.forEach(element =>{
-                lanes += `&nbsp;| <strong>${element[0]}</strong> ${element[2]} <strong>${element[1]}</strong>`
-            })
-            lanes += `<br>`;
-        }
-        if(this.lane14 != 0){
-            lanes += `&nbsp;&nbsp;&nbsp;&nbsp;<strong>#14</strong> `;
-            this.lane14Array.forEach(element =>{
-                lanes += `&nbsp;| <strong>${element[0]}</strong> ${element[2]} <strong>${element[1]}</strong>`
-            })
-            lanes += `<br>`;
-        }
-        return lanes;
-
-    }
-
-    get cashierWithLanesAssigned(){
-        return this.#cashiers;
-    }
-
-    checkRoleForLaneAssignment(role){
-    switch (role) {
-        case "Express Cashier":
-        case "Regular Cashier":
-        case "Supervisor":
-            return true;   
-        default:
-            return false;
+//Represents a cashier with a shift and a role
+class Cashier{
+    constructor(start, end, first, last, role){
+        this.start = parseFloat(start);
+        this.end = parseFloat(end);
+        this.first = first;
+        this.last = last;
+        this.role = role;
+        this.lane = null;
+        this.isAssigned = false;
     }
 }
 
+class Lane{
+    constructor(id, type = "normal"){
+        this.id = id;
+        this.type = type; //Express, supervisor, normal
+        this.schedule = [];
+    }
+    //Checks if the lane is free during the Cashiers Shift
+    isAvailable(start, end){
+        return this.schedule.every(({start: s, end: e}) => end <= s || start >= e);
+    }
+    //Assign the cashier to this lane
+    assign(cashier){
+        this.schedule.push({start: cashier.start, end: cashier.end});
+        cashier.lane = this.id;
+        cashier.isAssigned = true;
+    }
+    //Used to sort lanes by when they become available next
+    getNextFreeTime(){
+        return this.schedule.length > 0 ? this.schedule[this.schedule.length - 1].end : 0;
+    }
 }
+
+//Manages all assignments and rules
+class Scheduler{
+    constructor(){
+        this.cashiers = [];
+        this.lanes = [
+            new Lane(7, "normal"),
+            new Lane(6, "express"),
+            new Lane(8, "normal"),
+            new Lane(9, "normal"),
+            new Lane(10, "normal"),
+            new Lane(11, "normal"),
+            new Lane(12, "supervisor"),
+            new Lane(13, "supervisor"),
+            new Lane(14, "normal"),
+        ];
+    }
+
+    //Adds a cashier to the list if their role is valid
+    addCashier(data){
+        const[start, end , first, last, role] = data;
+        if(["Regular Cashier", "Express Cashier", "Supervisor"].includes(role)){
+            this.cashiers.push(new Cashier(start, end , first, last, role));
+        }
+    }
+    //Assign lanes With respect to constraints
+    assignLanes(){
+        //Sort: regular -> express -> Supervisor, then earliest shift first
+        this.cashiers.sort((a,b)=>{
+            const roleRank = {"Regular Cashier": 0, "Express Cashier" : 1, "Supervisor": 2};
+            return roleRank[a.role] - roleRank[b.role] || a.start - b.start;
+        });
+        //Identifies special cases
+        const closing = this.cashiers.find(c => c.end === 23);
+        const opening = this.cashiers.find(c => c.start <= 7.5);
+
+        for(let cashier of this.cashiers){
+            if(cashier.isAssigned) continue;
+
+            //Filter lanes based on constraints
+            let possibleLanes = this.lanes.filter(l => {
+                if(cashier === opening && l.id === 8) return false;
+                if(cashier === closing) return l.id === 8;
+                if(cashier.role === "Supervisor") return l.type === "supervisor";
+                if(cashier.role === "Express Cashier") return l.type === "express";
+                if(cashier.role === "Regular Cashier") return l.type === "normal";
+                return false;
+            });
+            //Choose the lane that becomes free soonest
+            possibleLanes.sort((a,b) => a.getNextFreeTime() - b.getNextFreeTime());
+
+            //Assign to first available lane
+            for(let lane of possibleLanes){
+                if(lane.isAvailable(cashier.start, cashier.end)){
+                    lane.assign(cashier);
+                    break;
+                }
+            }
+            if(!cashier.isAssigned) cashier.lane = "B";
+        }
+    }
+    printAssignments(){
+        for(let cashier of this.cashiers){
+            console.log(`${cashier.first} ${cashier.last} → Lane ${cashier.lane}`);
+        }
+    }
+    //Get all cashier Assignments
+    getCashierAssignments(){
+        return this.cashiers.map (c => ({
+            name: `${c.first} ${c.last}`,
+            lane: c.lane,
+            role: c.role,
+            start: c.start,
+            end: c.end
+        }));
+    }
+}
+window.scheduler = new Scheduler();
