@@ -49,7 +49,7 @@ class Scheduler{
             new Lane(10, "normal"),
             new Lane(11, "normal"),
             new Lane(12, "supervisor"),
-            new Lane(13, "supervisor"),
+            new Lane(13, "normal"),
             new Lane(14, "normal"),
         ];
     }
@@ -70,30 +70,50 @@ class Scheduler{
         });
         //Identifies special cases
         const closing = this.cashiers.find(c => c.end === 23);
-        const opening = this.cashiers.find(c => c.start <= 7.5);
+
+        const lane8 = this.lanes.find(l => l.id === 8);
+        if (closing && lane8 && lane8.isAvailable(closing.start, closing.end)) {
+            lane8.assign(closing);
+        }
+
+        const guaranteedSeven = this.cashiers.find(c => c.start === 9.5);
+        if (guaranteedSeven) {
+            const lane7 = this.lanes.find(l => l.id === 7);
+            if (lane7 && lane7.isAvailable(guaranteedSeven.start, guaranteedSeven.end)) {
+                lane7.assign(guaranteedSeven);
+            }
+        }
+
+
 
         for(let cashier of this.cashiers){
             if(cashier.isAssigned) continue;
 
+
             //Filter lanes based on constraints
-            let possibleLanes = this.lanes.filter(l => {
-                if(cashier === opening && l.id === 8) return false;
-                if(cashier === closing) return l.id === 8;
-                if(cashier.role === "Supervisor") return l.type === "supervisor";
-                if(cashier.role === "Express Cashier") return l.type === "express";
-                if(cashier.role === "Regular Cashier") return l.type === "normal";
+            let possibleLanes = this.lanes.filter(lane => {
+                if(lane.id === 8) return false;
+                if(lane.id === 7) return false;
+                if(cashier.role === "Supervisor") return lane.type === "supervisor" || lane.id === 13; //Allows supervisor on next available register
+                if(cashier.role === "Express Cashier") return lane.type === "express";
+                if(cashier.role === "Regular Cashier") return lane.type === "normal";
                 return false;
             });
             //Choose the lane that becomes free soonest
             possibleLanes.sort((a,b) => a.getNextFreeTime() - b.getNextFreeTime());
 
             //Assign to first available lane
+            let assigned = false;
             for(let lane of possibleLanes){
                 if(lane.isAvailable(cashier.start, cashier.end)){
                     lane.assign(cashier);
                     break;
                 }
             }
+            if(!assigned && possibleLanes.length > 0){
+                possibleLanes[0].assign(cashier);
+            }
+
             if(!cashier.isAssigned) cashier.lane = "B";
         }
     }
