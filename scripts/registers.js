@@ -76,14 +76,11 @@ class Scheduler{
             lane8.assign(closing);
         }
 
-        const guaranteedSeven = this.cashiers.find(c => c.start === 9.5);
-        if (guaranteedSeven) {
-            const lane7 = this.lanes.find(l => l.id === 7);
-            if (lane7 && lane7.isAvailable(guaranteedSeven.start, guaranteedSeven.end)) {
-                lane7.assign(guaranteedSeven);
-            }
+        const firstAfter930 = this.cashiers.find ( c => c.start >= 9.5 && !c.isAssigned);
+        const lane7 = this.lanes.find(l => l.id === 7);
+        if(firstAfter930 && 7 && lane7.isAvailable(firstAfter930.start, firstAfter930.end)){
+            lane7.assign(firstAfter930);
         }
-
 
 
         for(let cashier of this.cashiers){
@@ -93,7 +90,6 @@ class Scheduler{
             //Filter lanes based on constraints
             let possibleLanes = this.lanes.filter(lane => {
                 if(lane.id === 8) return false;
-                if(lane.id === 7) return false;
                 if(cashier.role === "Supervisor") return lane.type === "supervisor" || lane.id === 13; //Allows supervisor on next available register
                 if(cashier.role === "Express Cashier") return lane.type === "express";
                 if(cashier.role === "Regular Cashier") return lane.type === "normal";
