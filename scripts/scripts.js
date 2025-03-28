@@ -414,71 +414,56 @@ function convertTo24Hour(timeStr) {
 // Completed 12/15/23 working with multiple days.
 var breaktimeCashierName = [];
 var arrayOfCashiers = [];
-var lanes = new registers;
+//var lanes = new registers;
 var counterForjsonLoop = 1;
 
 
 
-function setupForMain (day){
+function setupForMain(day) {
     containerForCashierData = document.getElementById('containerToFillWithCasherData' + currentDay);
-    //console.log(day);
-    // for lane assignments
-    lanes = new registers;
-    // Loop Counters
     counterForjsonLoop = 1;
-
-
-    //Arrays for storing cashiers
-
     breaktimeCashierName = [];
     arrayOfCashiers = [];
-  
 
     document.getElementById(`dayAndDate${currentDay}`).innerHTML = day[0].__EMPTY;
-    //Starting index of 4 is the first occurance of the employees.
+
+    window.scheduler = new Scheduler(); // Reset scheduler
 
     while (counterForjsonLoop < day.length) {
+        const person = day[counterForjsonLoop];
 
+        window.scheduler.addCashier([
+            getTwentyFourHourTimeForBreakArray(person.__EMPTY_5),
+            getTwentyFourHourTimeForBreakArray(person.__EMPTY_6),
+            splitFullNameIntoFirst(person.__EMPTY),
+            splitFullNameIntoLast(person.__EMPTY),
+            person.__EMPTY_4
+        ]);
 
-        arrayOfCashiers.push(buildCashier(day[counterForjsonLoop], counterForjsonLoop));
-
-        lanes.buildArrayOfCashierForLaneAssignments([
-            getTwentyFourHourTimeForBreakArray(day[counterForjsonLoop].__EMPTY_5),
-            getTwentyFourHourTimeForBreakArray(day[counterForjsonLoop].__EMPTY_6),
-            splitFullNameIntoLast(day[counterForjsonLoop].__EMPTY),
-            splitFullNameIntoFirst(day[counterForjsonLoop].__EMPTY),
-            day[counterForjsonLoop].__EMPTY_4,
-            counterForjsonLoop]
-        )
+        arrayOfCashiers.push(buildCashier(person, counterForjsonLoop));
         counterForjsonLoop++;
     }
-    lanes.assignRegister();
-    lanes.logArray();
-    arrayOfCashiers.forEach((item) => { main(item) });
-    // sort the array of cashier for breaks
+
+    window.scheduler.assignLanes();
+
+    // Cache assignment results
+    const assignments = window.scheduler.getCashierAssignments();
+
+    arrayOfCashiers.forEach((cashier, i) => {
+        // Assign lane from scheduler's output
+        const assigned = assignments.find(a =>
+            a.name.includes(cashier.employeeFirstName.trim()) &&
+            a.name.includes(cashier.employeeLastName.trim())
+        );
+        if (assigned) {
+            cashier.lane = assigned.lane;
+        }
+        main(cashier);
+    });
+
     breaktimeCashierName.sort((a, b) => a[0] - b[0]);
-
-    // console.log(arrayOfCashiers);
-    //console.log(breaktimeCashierName);
-
-    // create and add a div for sorted break time by cashier container
-    var breakTimeDiv = document.createElement("div");
-    breakTimeDiv.classList = "breakTimeDiv d-flex flex-column flex-wrap";
-    breakTimeDiv.id = "breakDiv" + currentDay;
-    containerForCashierData.appendChild(breakTimeDiv);
-    var breakDiv = document.getElementById("breakDiv" + currentDay);
-
-    // Add sorted list of cashiers in a list at the bottom of the lane assignments
-    if (limitRolesForBreaks.checked) {
-        breakDiv.appendChild(addColumn("<strong>Breaks and lunches sorted by time</strong>", normalColumnWidth));
-        breaktimeCashierName.forEach((item) => { if (limitTheRolesAllowedForBreaks(item[4])) { breakDiv.appendChild(addColumn("&emsp;" + item[1] + " | " + item[3] + " |    " + item[2], normalColumnWidthTextAlignLeft)) } });
-    } else {
-        breaktimeCashierName.forEach((item) => { breakDiv.appendChild(addColumn("&emsp;" + item[1] + " | " + item[3] + " |    " + item[2], normalColumnWidthTextAlignLeft)) });
-    }
-
-    // Add the end time of each register at the back of the list of breaks
-    breakDiv.appendChild(addColumn("&emsp;" + lanes.lanesUsedByEndTime, normalColumnWidthTextAlignLeft))
 }
+
 
 
 
@@ -495,21 +480,13 @@ function main(cashierDataPerLine){
     //Name
     grabRow.append(addColumn(`${cashierDataPerLine.employeeFirstName} ${cashierDataPerLine.employeeLastName}`, wideColumnWidth));
     //Lane Assignment
-    if(checkRoleForLaneAssignment(cashierDataPerLine.employeeRole)){
-
-        lanes.cashierWithLanesAssigned.forEach((element)=>{
-
-            //console.log(element);
-           // console.log(cashierDataPerLine.employeeNumber);
-
-            if (element[5] == cashierDataPerLine.employeeNumber){
-                grabRow.append(addColumn(element[6], normalColumnWidth)); 
-            }
-        });
-
-    }else{
-        grabRow.append(addColumn(` `,normalColumnWidth));
+    // Lane Assignment
+    if (checkRoleForLaneAssignment(cashierDataPerLine.employeeRole)) {
+        grabRow.append(addColumn(cashierDataPerLine.lane || "B", normalColumnWidth));
+    } else {
+        grabRow.append(addColumn("-", normalColumnWidth));
     }
+
     //Role
     grabRow.append(addColumn(cashierDataPerLine.employeeRole.split(" ")[0], normalColumnWidthTextAlignLeft));
     //Starting time
