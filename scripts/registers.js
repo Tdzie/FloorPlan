@@ -42,8 +42,8 @@ class Scheduler{
     constructor(){
         this.cashiers = [];
         this.lanes = [
-            new Lane(7, "normal"),
-            new Lane(6, "express"),
+            new Lane(7, "express"),
+            new Lane(6, "normal"),
             new Lane(8, "normal"),
             new Lane(9, "normal"),
             new Lane(10, "normal"),
@@ -75,8 +75,8 @@ class Scheduler{
         if (closing && lane8 && lane8.isAvailable(closing.start, closing.end)) {
             lane8.assign(closing);
         }
-
-        const firstAfter930 = this.cashiers.find ( c => c.start >= 9.5 && !c.isAssigned);
+        // changed starting time to 9
+        const firstAfter930 = this.cashiers.find ( c => c.start >= 9 && !c.isAssigned);
         const lane7 = this.lanes.find(l => l.id === 7);
         if(firstAfter930 && 7 && lane7.isAvailable(firstAfter930.start, firstAfter930.end)){
             lane7.assign(firstAfter930);

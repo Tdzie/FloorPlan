@@ -539,7 +539,6 @@ function checkRoleForLaneAssignment(role){
     switch (role) {
         case "Express Cashier":
         case "Regular Cashier":
-        case "Courtesy Clerk":
         case "Supervisor":
             return true;   
         default:
