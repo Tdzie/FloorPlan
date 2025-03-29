@@ -66,6 +66,8 @@ class Scheduler{
         //Sort: regular -> express -> Supervisor, then earliest shift first
         this.cashiers.sort((a,b)=>{
             const roleRank = {"Regular Cashier": 0, "Express Cashier" : 1, "Supervisor": 2};
+            
+            console.log(this.cashiers);
             return roleRank[a.role] - roleRank[b.role] || a.start - b.start;
         });
         //Identifies special cases
