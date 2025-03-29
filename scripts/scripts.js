@@ -463,6 +463,13 @@ function setupForMain(day) {
 
     breaktimeCashierName.sort((a, b) => a[0] - b[0]);
 
+           // create and add a div for sorted break time by cashier container
+     var breakTimeDiv = document.createElement("div");
+     breakTimeDiv.classList = "breakTimeDiv d-flex flex-column flex-wrap";
+     breakTimeDiv.id = "breakDiv" + currentDay;
+     containerForCashierData.appendChild(breakTimeDiv);
+     var breakDiv = document.getElementById("breakDiv" + currentDay);
+
         // Add sorted list of cashiers in a list at the bottom of the lane assignments
         if (limitRolesForBreaks.checked) {
             breakDiv.appendChild(addColumn("<strong>Breaks and lunches sorted by time</strong>", normalColumnWidth));
