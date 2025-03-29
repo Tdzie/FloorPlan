@@ -462,6 +462,14 @@ function setupForMain(day) {
     });
 
     breaktimeCashierName.sort((a, b) => a[0] - b[0]);
+
+        // Add sorted list of cashiers in a list at the bottom of the lane assignments
+        if (limitRolesForBreaks.checked) {
+            breakDiv.appendChild(addColumn("<strong>Breaks and lunches sorted by time</strong>", normalColumnWidth));
+            breaktimeCashierName.forEach((item) => { if (limitTheRolesAllowedForBreaks(item[4])) { breakDiv.appendChild(addColumn("&emsp;" + item[1] + " | " + item[3] + " |    " + item[2], normalColumnWidthTextAlignLeft)) } });
+        } else {
+            breaktimeCashierName.forEach((item) => { breakDiv.appendChild(addColumn("&emsp;" + item[1] + " | " + item[3] + " |    " + item[2], normalColumnWidthTextAlignLeft)) });
+        }
 }
 
 
@@ -514,6 +522,8 @@ function main(cashierDataPerLine){
         grabRow.append(addColumn(cashierDataPerLine.setBreaks()[2], normalColumnWidth));
     }
     counterForLoading++;
+
+    
 
 };
 
