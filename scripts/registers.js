@@ -63,13 +63,21 @@ class Scheduler{
     }
     //Assign lanes With respect to constraints
     assignLanes(){
+        this.cashiers.sort((b,a)=> {
+            return b.end - a.end;
+        })
+        console.log("sort for closing cashier");
+        console.log(this.cashiers);
+
         //Sort: regular -> express -> Supervisor, then earliest shift first
         this.cashiers.sort((a,b)=>{
             const roleRank = {"Regular Cashier": 0, "Express Cashier" : 1, "Supervisor": 2};
             
-            console.log(this.cashiers);
+            
             return roleRank[a.role] - roleRank[b.role] || a.start - b.start;
         });
+        console.log("Resort for role/starting time");
+        console.log(this.cashiers);
         //Identifies special cases
         const closing = this.cashiers.find(c => c.end === 23);
 
