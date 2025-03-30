@@ -100,7 +100,7 @@ class Scheduler{
             //Filter lanes based on constraints
             let possibleLanes = this.lanes.filter(lane => {
                 if(lane.id === 8) return false;
-                if(cashier.first === "Roseann" && lane.id === 7) return false;
+                if(cashier.last === "Roseann" && lane.id === 7) return false;
                 if(cashier.role === "Supervisor") return lane.type === "supervisor" || lane.id === 13; //Allows supervisor on next available register
                 if(cashier.role === "Express Cashier") return lane.type === "express";
                 if(cashier.role === "Regular Cashier") return lane.type === "normal";
