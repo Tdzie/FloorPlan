@@ -86,10 +86,10 @@ class Scheduler{
             lane8.assign(closing);
         }
         // changed starting time to 9
-        const firstAfter930 = this.cashiers.find ( c => c.start >= 9 && !c.isAssigned);
+        const firstAfterNine = this.cashiers.find ( c => c.start >= 9 && !c.isAssigned);
         const lane7 = this.lanes.find(l => l.id === 7);
-        if(firstAfter930 && 7 && lane7.isAvailable(firstAfter930.start, firstAfter930.end)){
-            lane7.assign(firstAfter930);
+        if(firstAfterNine && 7 && lane7.isAvailable(firstAfterNine.start, firstAfterNine.end)){
+            lane7.assign(firstAfterNine);
         }
 
 
